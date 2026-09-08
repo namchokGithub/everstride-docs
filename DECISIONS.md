@@ -46,3 +46,21 @@ Trade-off:
 Revisit when:
 
 - Multiple environments (dev/staging/prod) need separate configs and the asset-bundling approach becomes awkward
+
+## ADR-005: `health` package (carp.dk) for Health Connect integration
+
+Reason:
+
+- Actively maintained, verified publisher on pub.dev, wraps both Health Connect (Android) and HealthKit (iOS) behind one API — keeps a future iOS port possible without swapping the data source
+- Covers everything Phase 1 needs directly: SDK availability (`getHealthConnectSdkStatus`), permission request/check (`requestAuthorization`, `hasPermissions`), and reads (`getTotalStepsInInterval`)
+- Avoids hand-writing a native Kotlin bridge to the Health Connect Client SDK, which would mean maintaining platform channel code ourselves for something this package already handles
+
+Trade-off:
+
+- One more third-party dependency to track for breaking changes (the package is pre-1.0-style versioned, `^13.x`, and has shipped breaking API changes across majors before)
+- `MainActivity` must extend `FlutterFragmentActivity` instead of `FlutterActivity` for the permission-request flow to work — a platform-specific constraint imposed by the package
+
+Revisit when:
+
+- An iOS build is actually planned and HealthKit behavior under this package needs validating
+- The package stalls or a Health Connect API gap forces a workaround

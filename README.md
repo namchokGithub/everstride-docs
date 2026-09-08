@@ -19,10 +19,14 @@ Everstride is an Android-first, health-powered RPG where real-world walking beco
 | Document                                            | Purpose                                                              |
 | --------------------------------------------------- | -------------------------------------------------------------------- |
 | [Project context](CONTEXT.md)                       | Product vision, core loop, stack, constraints, and current milestone |
-| [Development plan](plan/EVERSTRIDE_PLAN.md)         | MVP scope, architecture principles, and phased implementation plan   |
+| [Development plan](EVERSTRIDE_PLAN.md)              | MVP scope, architecture principles, and phased implementation plan   |
 | [Progress tracker](PROGRESS.md)                     | What is complete, what is next, and the active checklist             |
 | [Architecture decisions](DECISIONS.md)              | Key technical decisions, their rationale, and revisit conditions     |
 | [Working agreement](AGENTS.md)                      | Guardrails for contributors and AI agents working in this repository |
+| [Manual recheck steps](development/testing.md)      | Quick smoke-test steps to confirm each phase still works             |
+| [Core game loop](game-design/core-loop.md)          | Player-facing flow from real-world activity to RPG progression       |
+| [Energy system](game-design/energy-system.md)       | Rules for earning, storing, and spending Energy                      |
+| [Player progression](game-design/progression.md)    | MVP rules for EXP, gold, levels, and character advancement           |
 | [Mobile app README](../everstride-mobile/README.md) | Local setup and day-to-day development for the Flutter application   |
 
 ## Where to start
