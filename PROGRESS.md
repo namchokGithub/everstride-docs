@@ -118,11 +118,32 @@
 
 **หมายเหตุ**: task การ wire `PlayerController` เข้า UI ไม่มี automated test (Riverpod controller + widget wiring) — ตรวจด้วย `flutter analyze` (ผ่าน, no issues) และ manual recheck steps ใน `everstride-docs/development/testing.md` (section "Phase 3 — Player Progression MVP") แทน, ตาม pattern เดียวกับ Phase 2's `HealthSyncController` wiring. ตัว logic หลัก (`PlayerRepositoryImpl`, `CreditEnergyFromStepsUseCase`, `SpendEnergyForAdventureUseCase`) มี unit test ครบจาก task ก่อนหน้าอยู่แล้ว (11 tests รวมกัน, ผ่านหมด).
 
+### Phase 3.1 — UI Foundation
+
+ดู `everstride-docs/specs/2026-09-08-phase3.1-ui-foundation-design.md` สำหรับ design rationale เต็ม ๆ (ไม่ก็อปซ้ำที่นี่)
+
+- [x] Add onboarding persistence (`AppSettings` single-row table + `AppSettingsRepository`, schema migration 2 → 3 เพื่อให้ database เดิมเปิดได้โดยไม่ crash)
+- [x] Add Splash/Onboarding/Permission flow (Splash อ่าน `onboardingCompleted`; Permission บันทึกว่าผ่าน onboarding แล้ว ไม่ว่าผู้ใช้จะอนุญาต Health Connect หรือไม่)
+- [x] Add persistent five-tab navigation shell (`StatefulShellRoute.indexedStack`: Home, Adventure, Journal, Character, Menu และเก็บ state ของแต่ละ tab)
+- [x] Reskin Home as a real dashboard (steps ring, level/EXP, Energy, Gold, calendar และ sync action โดยใช้ provider/logic เดิม)
+- [x] Add real Adventure, Character, and Menu screens (ย้าย temporary Adventure action, แสดง Player state, และย้าย Health/debug tools ไป Menu)
+- [x] Add Journal placeholder (ยังไม่มี activity/quest history ใน phase นี้)
+- [x] Add mockup-derived theme tokens and background asset registration (`lib/assets/bg.png`; ไม่มี dependency ใหม่)
+- [x] Add targeted tests and manual recheck steps (repository, Splash routing, bottom-nav behavior; รายละเอียด manual test อยู่ที่ `development/testing.md`)
+
+### Phase 3.2 — Adventure UI Skeleton
+
+ดู `everstride-docs/specs/2026-09-09-phase3.2-adventure-ui-skeleton-design.md` สำหรับ design rationale เต็ม ๆ (ไม่ก็อปซ้ำที่นี่)
+
+- [x] Reskin Adventure as Greenwood Trail (`lib/features/adventure/presentation/screens/adventure_screen.dart` — title/description, rounded trail artwork จาก `lib/assets/bg.png`, และ layout ตาม mockup)
+- [x] Add local difficulty selection (Easy/Normal/Hard, default Easy; เปลี่ยนเฉพาะ selected styling ในหน้านี้และไม่ persist state)
+- [x] Preserve temporary Adventure gameplay (`Start Adventure · 10 Energy` ยังคงเรียก `PlayerController.spendOnAdventure()` เดิม: 10 Energy → +25 EXP, +10 Gold; difficulty ยังไม่กระทบ cost/reward)
+- [x] Add implemented reward preview and action feedback (แสดงเฉพาะ +25 EXP/+10 Gold; success แสดง SnackBar, insufficient Energy แสดง `Not enough energy` เหมือนเดิม)
+- [x] Keep Phase 4 scope deferred (ไม่มี Adventure model, database, item/loot, balance, in-progress/result screen, หรือ atomic transaction ใน phase นี้)
+- [x] Add targeted widget tests (`test/features/adventure/presentation/adventure_screen_test.dart` ครอบคลุม default/selection state, successful action, และ insufficient-Energy action; `flutter analyze` ผ่าน)
+
 ## Phase ถัดไป
 
-- [ ] Phase 3.1 UI Foundation @everstride-docs/image/draft_design.png
-- [ ] Phase 3.2 Adventure UI Skeleton
-  - [ ] เอกสาร `game-design/adventure-system.md`
 - [ ] Phase 4 — Adventure MVP
   - [ ] เอกสาร `game-design/quests.md`
 - [ ] Phase 5 — Daily Quests

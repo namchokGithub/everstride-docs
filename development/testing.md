@@ -55,3 +55,33 @@ uninstall/reinstall does).
    as before closing (this exercises the schema migration on a device
    that already had Phase 2's database file, if you're testing on one that
    ran Phase 2 before this phase existed).
+
+## Phase 3.1 — UI Foundation
+
+1. Fresh install (or clear app data) → app opens to Splash → Onboarding →
+   "Get Started" → Permission screen → "Continue" (or "Not now") → lands on
+   Home inside the bottom-nav shell.
+2. Force-close and reopen the app → Splash routes straight to Home (skips
+   Onboarding/Permission — `onboardingCompleted` persisted in the database).
+3. Tap each of the 5 bottom-nav destinations (Home/Adventure/Journal/
+   Character/Menu) → each shows its own screen; switching back to a
+   previously-visited tab preserves its state (`StatefulShellRoute`).
+4. On Home: the steps ring reflects today's steps, the EXP bar reflects
+   Player state, tapping the sync icon behaves exactly as the old "Sync
+   Now" button did (the rewardable-steps caption below it updates), and
+   tapping the calendar icon still lets you view a past date's steps.
+5. Tap "Go to Adventure" on Home → lands on the Adventure tab; the
+   Adventure (temporary) button there still spends Energy and grants
+   EXP/Gold exactly as before (this is the same button, just relocated —
+   including still showing "Not enough energy" correctly when Energy < 10).
+6. On Menu (debug build only): the "Debug Tools" section shows the seeder
+   button; tapping it still inserts steps for whichever date Home's
+   calendar icon last selected.
+7. Revoke Health Connect permission (or uninstall Health Connect) mid-use
+   → Home shows the same denied/unavailable banners as before (unchanged
+   behavior), the app does not crash, and does not re-route back to the
+   full-screen Permission screen.
+8. Force-close and reopen the app on a device whose `everstride.sqlite`
+   predates this phase (`schemaVersion` 1 or 2) → app still opens without
+   crashing (exercises the `AppSettings` migration on top of an existing
+   `health_daily`/`player` database).
