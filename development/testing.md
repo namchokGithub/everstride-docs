@@ -114,3 +114,16 @@ uninstall/reinstall does).
 8. Force-close the app after a successful Adventure and reopen it → the
    updated Level/EXP/Energy/Gold on the Character tab persist exactly as
    shown on the result screen (no partial or duplicated state).
+
+## Phase 5 — Daily Quests
+
+1. Open Journal → First Steps (0/1,000), Wanderer's Path (0/3,000), and
+   Trailbound (0/1) appear with no Claim action.
+2. Seed at least 1,000 Steps, then Sync on Home → First Steps becomes
+   Claimable; under 3,000, Wanderer's Path remains In Progress.
+3. Claim First Steps → Character gains exactly 10 EXP and 5 Gold; its card
+   becomes Claimed and no longer offers Claim.
+4. Complete any Greenwood Trail difficulty → Trailbound becomes Claimable.
+5. Force-close/reopen after a claim → Quest state and Player rewards persist.
+6. Advance device date one day and reopen Journal → three fresh Quests appear;
+   yesterday's unclaimed Quests are expired and cannot be claimed.

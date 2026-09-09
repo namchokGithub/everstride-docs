@@ -154,9 +154,19 @@
 - [x] Add focused automated coverage (catalog 1 test, reward math 6 tests, Adventure UI/navigation/dialog/double-tap 4 widget tests; `flutter analyze` ผ่าน)
 - [x] Add Phase 4 manual recheck (`development/testing.md` ครอบคลุม tier values, result, level up, insufficient Energy, duplicate tap, และ persistence)
 
+### Phase 5 — Daily Quests
+
+ดู `everstride-docs/game-design/quests.md` สำหรับ game-design rationale และ Quest values เต็ม ๆ (ไม่ก็อปซ้ำที่นี่)
+
+- [x] Add fixed Daily Quest content (`QuestDefinition`/`QuestInstance` + catalog 3 quests: 1,000 Steps, 3,000 Steps, และ 1 Adventure completion)
+- [x] Add local Quest persistence (`DailyQuestInstances` Drift table, schema migration 5 → 6, และ `QuestRepository`)
+- [x] Add lazy rollover and Step progress (`EnsureDailyQuestsUseCase` สร้าง Quest วันนี้, expire Quest เก่า, และอ่าน total steps จาก local health sync record)
+- [x] Add Adventure progress and safe claims (`RecordAdventureCompletionUseCase`; `ClaimDailyQuestUseCase` re-check stored state และให้ EXP/Gold พร้อม claimed state ใน Drift transaction)
+- [x] Add Quest controller and Journal UI (Sync refreshes Step quests, Adventure success advances Trailbound, Claim reloads Player state)
+- [x] Add focused automated coverage and Phase 5 manual recheck (`quest_catalog`, repository round-trip, rollover, Adventure completion, stale duplicate claim; `flutter analyze` ผ่าน)
+
 ## Phase ถัดไป
 
-- [ ] Phase 5 — Daily Quests
 - [ ] เอกสาร `game-design/economy.md`
 - [ ] Phase 6 — Supabase Integration
 - [ ] เอกสาร `game-design/balancing.md`
