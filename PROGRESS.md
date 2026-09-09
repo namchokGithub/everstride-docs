@@ -142,14 +142,24 @@
 - [x] Keep Phase 4 scope deferred (ไม่มี Adventure model, database, item/loot, balance, in-progress/result screen, หรือ atomic transaction ใน phase นี้)
 - [x] Add targeted widget tests (`test/features/adventure/presentation/adventure_screen_test.dart` ครอบคลุม default/selection state, successful action, และ insufficient-Energy action; `flutter analyze` ผ่าน)
 
+### Phase 4 — Adventure MVP
+
+ดู `everstride-docs/game-design/adventure-system.md` สำหรับ game-design rationale และ difficulty matrix เต็ม ๆ (ไม่ก็อปซ้ำที่นี่)
+
+- [x] Add static Adventure content (`Adventure`/`AdventureDifficulty` + `greenwoodTrail` catalog: Easy 10/25/10, Normal 20/55/22, Hard 30/90/36; ไม่มี Drift table หรือ AdventureRun history)
+- [x] Generalize Adventure resolution (`SpendEnergyForAdventureUseCase` และ `PlayerController.spendOnAdventure` รับ energy cost/EXP/Gold จาก caller เป็น primitive values; player feature ไม่ import adventure feature)
+- [x] Add real per-difficulty Adventure screen (preview, CTA, และ controller call ใช้ selected Greenwood Trail difficulty ค่าเดียวกัน)
+- [x] Add dedicated result screen (`/adventure-result` อยู่นอก bottom-nav shell, แสดง Energy/EXP/Gold, Lv/EXP หลัง resolve, และ Level Up callout; Continue pop กลับ Adventure tab)
+- [x] Handle insufficient Energy and duplicate starts (dialog บอก cost/current Energy แบบชัดเจนโดยไม่เปลี่ยน Player state; in-flight guard ป้องกัน double-tap resolve ซ้ำ)
+- [x] Add focused automated coverage (catalog 1 test, reward math 6 tests, Adventure UI/navigation/dialog/double-tap 4 widget tests; `flutter analyze` ผ่าน)
+- [x] Add Phase 4 manual recheck (`development/testing.md` ครอบคลุม tier values, result, level up, insufficient Energy, duplicate tap, และ persistence)
+
 ## Phase ถัดไป
 
-- [ ] Phase 4 — Adventure MVP
-  - [ ] เอกสาร `game-design/quests.md`
 - [ ] Phase 5 — Daily Quests
-  - [ ] เอกสาร `game-design/economy.md`
+- [ ] เอกสาร `game-design/economy.md`
 - [ ] Phase 6 — Supabase Integration
-  - [ ] เอกสาร `game-design/balancing.md`
+- [ ] เอกสาร `game-design/balancing.md`
 - [ ] Phase 7 — Full UI & UX Polish
 
 ## กฎที่ต้องยึดระหว่างทำงาน (จาก plan section 14)

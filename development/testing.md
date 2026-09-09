@@ -85,3 +85,32 @@ uninstall/reinstall does).
    predates this phase (`schemaVersion` 1 or 2) → app still opens without
    crashing (exercises the `AppSettings` migration on top of an existing
    `health_daily`/`player` database).
+
+## Phase 4 — Adventure MVP
+
+1. Open the Adventure tab → Greenwood Trail shows Easy selected by default,
+   "Start Adventure · 10 Energy" and "+25 EXP"/"+10 Gold" reward cards.
+2. Tap Normal → button and reward cards update to "20 Energy"/"+55 EXP"/
+   "+22 Gold"; tap Hard → "30 Energy"/"+90 EXP"/"+36 Gold". Tap back to Easy
+   → values return to 10/25/10.
+3. With ≥10 Energy, start on Easy → a dedicated result screen appears
+   (not a SnackBar) showing Greenwood Trail, Easy, "-10" Energy, "+25" EXP,
+   "+10" Gold, and current Lv/EXP; "Continue" returns to the Adventure tab
+   with the bottom nav visible again.
+4. Repeat with enough Energy for Normal or Hard → the result screen shows
+   the correct 20/55/22 or 30/90/36 values, matching what was displayed
+   before starting.
+5. Attempt an Adventure whose cost exceeds current Energy → a dialog names
+   the exact cost and current Energy (not a generic message), offers "Got
+   it", and does not navigate to a result screen; Energy/EXP/Gold on the
+   Character tab are unchanged afterward.
+6. Grant enough EXP in one Adventure to cross one or more level thresholds
+   (e.g. repeat Hard near a level boundary) → the result screen shows a
+   "Level Up!" callout with the correct before/after levels, and leftover
+   EXP after the level-up is not negative.
+7. Rapidly double-tap "Start Adventure" → only one resolution happens (the
+   button visibly disables while resolving); Energy is deducted exactly
+   once, not twice.
+8. Force-close the app after a successful Adventure and reopen it → the
+   updated Level/EXP/Energy/Gold on the Character tab persist exactly as
+   shown on the result screen (no partial or duplicated state).
