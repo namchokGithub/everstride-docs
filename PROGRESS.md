@@ -165,9 +165,17 @@
 - [x] Add Quest controller and Journal UI (Sync refreshes Step quests, Adventure success advances Trailbound, Claim reloads Player state)
 - [x] Add focused automated coverage and Phase 5 manual recheck (`quest_catalog`, repository round-trip, rollover, Adventure completion, stale duplicate claim; `flutter analyze` ผ่าน)
 
+### Phase 5.1 — Economy: Trail Supplies
+
+ดู `everstride-docs/game-design/economy.md` สำหรับ economy principles; ราคา 30 Gold และโบนัส ×1.5 เป็น decision ของ Phase 5.1 (ไม่มี inventory หรือ purchase record)
+
+- [x] Add optional Trail Supplies spending (30 Gold ต่อ Adventure run, floor-rounded ×1.5 EXP/Gold, ทุก difficulty)
+- [x] Make Adventure/Quest Player mutations transaction-safe (shared Drift transaction boundary ป้องกัน Player update หายเมื่อ claim กับ Adventure เกิดพร้อมกัน)
+- [x] Add Adventure toggle/result accounting (แสดง Gold ที่จ่าย, reset toggle หลัง run สำเร็จ, และป้องกัน Gold ไม่พอ)
+- [x] Add targeted coverage (Gold math, invalid costs, cross-feature transaction, Adventure UI/result/reset; `flutter analyze` ผ่าน)
+
 ## Phase ถัดไป
 
-- [ ] เอกสาร `game-design/economy.md`
 - [ ] Phase 6 — Supabase Integration
 - [ ] เอกสาร `game-design/balancing.md`
 - [ ] Phase 7 — Full UI & UX Polish

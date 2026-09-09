@@ -127,3 +127,15 @@ uninstall/reinstall does).
 5. Force-close/reopen after a claim → Quest state and Player rewards persist.
 6. Advance device date one day and reopen Journal → three fresh Quests appear;
    yesterday's unclaimed Quests are expired and cannot be claimed.
+
+## Phase 5.1 — Economy: Trail Supplies
+
+1. With under 30 Gold, open Adventure → Trail Supplies is disabled and says
+   `Need 30 Gold — you have N`.
+2. Earn at least 30 Gold through Adventures and/or Daily Quest claims → select
+   Trail Supplies on Easy; rewards change from +25 EXP/+10 Gold to +37 EXP/+15
+   Gold before starting.
+3. Complete that run → result shows `Trail Supplies -30`; Character Gold is
+   previous Gold -30 +15, and returning to Adventure leaves Supplies unchecked.
+4. Start without Supplies → result has no Trail Supplies row and normal
+   Adventure rewards remain unchanged.
