@@ -139,3 +139,24 @@ uninstall/reinstall does).
    previous Gold -30 +15, and returning to Adventure leaves Supplies unchecked.
 4. Start without Supplies → result has no Trail Supplies row and normal
    Adventure rewards remain unchanged.
+
+## Phase 6 — Supabase Integration
+
+1. Launch with empty Supabase values in `.env` → local gameplay works and Menu
+   says Cloud Backup is unavailable.
+2. After configuring a project, create an account. With email confirmation
+   enabled, the screen asks the player to check email and does not claim sign-in.
+3. Sign in with existing progress → verify `player_saves` includes Player,
+   `health_daily`, and daily quest data. Complete an Adventure or claim a Quest
+   and verify the later snapshot contains the new complete state.
+4. Reinstall and sign in to the same account with an existing cloud save → no
+   backup is uploaded automatically. Choose **Restore cloud backup** and verify
+   Player, Health checkpoints, and claimed quests replace local state without
+   duplicate Energy or Quest rewards.
+5. Repeat the fresh-install path and choose **Replace cloud backup** → verify
+   the destructive confirmation is clear and only the explicit choice changes
+   the remote snapshot. Cancel must leave the cloud save unchanged.
+6. Sign out of account A and into account B with an existing cloud save → the
+   same Restore/Replace choice appears; cancel preserves B's cloud save.
+7. Turn off network, make progress, then retry backup after reconnecting → the
+   latest snapshot reaches Supabase and local play was not interrupted.

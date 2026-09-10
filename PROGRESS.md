@@ -174,10 +174,21 @@
 - [x] Add Adventure toggle/result accounting (แสดง Gold ที่จ่าย, reset toggle หลัง run สำเร็จ, และป้องกัน Gold ไม่พอ)
 - [x] Add targeted coverage (Gold math, invalid costs, cross-feature transaction, Adventure UI/result/reset; `flutter analyze` ผ่าน)
 
+### Phase 6 — Supabase Integration
+
+ไม่มี game-design doc สำหรับ phase นี้; ใช้แนวทาง local-first/no-merge และป้องกันการเขียนทับข้อมูลข้าม account ตาม plan
+
+- [x] Add optional Supabase initialization (ไม่มี URL/key แอปยังทำงาน local-only; มี config จึงเปิด Supabase)
+- [x] Add email/password authentication (Sign Up, Sign In, Sign Out, email-confirmation state, และ Menu backup status/retry)
+- [x] Add account protection (remote save ที่มีอยู่จะไม่ถูกเขียนทับเมื่อเครื่องยังไม่เคยผูก account; ผู้ใช้ต้องเลือก Restore หรือยืนยัน Replace cloud backup)
+- [x] Add atomic cloud snapshot (`player_saves` เก็บ Player, `health_daily`, และ Daily Quest instances พร้อม RLS; migration ถูก apply กับ Supabase project แล้ว)
+- [x] Add safe restore and serialized backup (replace local state ใน Drift transaction, refresh Player หลัง restore, และ coalesce backup request)
+- [x] Connect real Supabase project and smoke-test auth (สร้าง confirmed test user และ Sign In จากแอปได้; `flutter analyze` ผ่าน)
+- [x] Re-run full manual cloud recheck after account-link safety fix (fresh install → sign in → Restore, explicit Replace, account switching, offline retry, และ RLS isolation ตาม `development/testing.md`)
+
 ## Phase ถัดไป
 
-- [ ] Phase 6 — Supabase Integration
-- [ ] เอกสาร `game-design/balancing.md`
+- [ ] Phase 6.1 Balancing
 - [ ] Phase 7 — Full UI & UX Polish
 
 ## กฎที่ต้องยึดระหว่างทำงาน (จาก plan section 14)
