@@ -16,7 +16,7 @@ Status: all plan checklist items done, verified on emulator and a real device. R
 8. Steps count shows a number for today (not stuck on "Loading...", no crash even if it's 0).
 9. Tap "Pick a date" → choose a past date → steps update for that date.
 10. Tap "Sync Now" → the number doesn't disappear during refresh (small spinner shows instead).
-11. Emulator only, debug build: tap "[Debug] Insert 500 test steps" a few times → total increases by exactly 500 each press (if it doesn't, the seeder is writing overlapping time windows again — Health Connect de-dupes those instead of summing).
+11. Emulator only, debug build: open Menu → Debug Tools, enter a positive Test steps value (default `100`), then insert it for the selected date. Sync afterward and verify the total/Energy increases by the requested amount. The seeder uses a past one-minute slot to avoid future-time Health Connect errors.
 12. Debug console/logcat shows readable `health.availability` / `health.permission` / `health.query` log lines for the actions above (only in debug builds).
 
 ## Phase 2 — Local Health Sync
@@ -160,3 +160,36 @@ uninstall/reinstall does).
    same Restore/Replace choice appears; cancel preserves B's cloud save.
 7. Turn off network, make progress, then retry backup after reconnecting → the
    latest snapshot reaches Supabase and local play was not interrupted.
+
+## Phase 6.1 — Balancing Metrics Instrumentation
+
+Metrics are local-only observations, not cloud backup data and not a gameplay
+ledger. Use a debuggable build, stop the app, then copy a consistent
+`everstride.sqlite` database (including its WAL sidecar when present) through
+Android Studio Device Explorer or `adb run-as com.namchok.everstride`. Open the
+copy in a SQLite browser; direct `adb pull` normally cannot read app-private
+storage.
+
+1. Sync Home, including a zero-delta sync and a catch-up sync → inspect
+   `metric_events` for one `health_sync` per `Ok(SyncResult)`. Check
+   `schemaVersion: 1`, total/per-day rewardable Steps, and original activity
+   dates.
+2. Let a sync create Energy → `energy_credited.energyGained` matches the
+   visible increase. A zero-gain conversion has no credit event and retains
+   pending Step remainder.
+3. Run Easy, Normal, and Hard with and without Trail Supplies → inspect the
+   requested costs/rewards, actual granted/spent values, selected identity, and
+   returned Energy. Hard with Supplies spends 30 Energy and 30 Gold, grants
+   135 EXP and 54 Gold, for net Gold +24.
+4. Attempt with insufficient Energy and insufficient Gold → exactly one
+   `adventure_attempt` per handled interaction has the matching stable outcome,
+   zero actual grants/spending, and `energyAfter: null`. Repeated taps while
+   the dialog is open must not duplicate it.
+5. Claim a Quest → compare the persisted claimed instance ID/date/rewards with
+   `quest_claimed`. A rejected duplicate claim has no event.
+6. Trigger a daily rollover with stale unclaimed Quests → `quest_rollover`
+   retains each original date/status and correct `expiredCount`. Repeating a
+   refresh creates no duplicate expiry event.
+7. Confirm sync, Adventure, and Quest feedback remain responsive. Label
+   debug-seeded sessions and note account/restore window boundaries manually;
+   uninstall loss is accepted and cloud restore does not recover metrics.

@@ -2,7 +2,7 @@
 
 ## Status
 
-**Pre-playtest balancing baseline — after Phase 5.**
+**Pre-playtest balancing baseline — after Phase 5.1 and Phase 6.**
 
 This document records Everstride’s current numeric economy and progression
 relationships, the questions they must answer in playtests, and the rules for
@@ -33,9 +33,13 @@ Current game content is intentionally small:
 - Three deterministic difficulties: Easy, Normal, Hard.
 - Three fixed Daily Quests.
 - No Energy cap, decay, passive regeneration, or purchases.
-- No Gold sink, item, equipment, shop, or premium currency.
+- Optional Trail Supplies: spend 30 Gold per Adventure for floor-rounded ×1.5
+  EXP and Gold rewards. No inventory, equipment, shop, or premium currency.
 - No random outcome, failure chance, combat, loot, or timed Adventure.
-- Local and offline-first player state.
+- Local and offline-first player state with optional Supabase authentication
+  and full gameplay backup/restore (Player, Health checkpoints, Daily Quests).
+  A remote save on a device with no matching account link requires an explicit
+  Restore/Replace choice before backup resumes.
 
 ## Balancing goals
 
@@ -77,6 +81,25 @@ The higher difficulties intentionally offer a modest efficiency increase. They
 must remain optional: an Easy player should still feel that their choice is
 valid, not wasteful.
 
+### Trail Supplies (Phase 5.1)
+
+Supplies are optional on every difficulty. The player must have 30 Gold before
+the run; the cost and rewards apply atomically. Energy cost is unchanged. Each
+reward is independently multiplied by 1.5 and rounded down. The toggle resets
+after a successful run; no item or purchase record is created.
+
+| Difficulty | Energy | Gold cost | EXP with Supplies | Gross Gold reward | Net Gold change |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Easy | 10 | 30 | 37 | 15 | -15 |
+| Normal | 20 | 30 | 82 | 33 | +3 |
+| Hard | 30 | 30 | 135 | 54 | +24 |
+
+Without Supplies, Gold changes by +10/+22/+36 respectively. Supplies reduce
+that net income by 25/19/12 Gold for an additional 12/27/45 EXP. These are
+implemented starting values, not validated final prices. Measure both gross
+earnings and spending; positive net Gold on Normal/Hard does not remove the
+30-Gold upfront requirement.
+
 ### Progression
 
 | Value                            | Current baseline          | Classification   |
@@ -110,7 +133,7 @@ not consume Steps, Energy, or Adventure completions.
 ## Derived reference scenarios
 
 These scenarios are arithmetic checks, not promises about how players should
-move.
+move. The existing 1,000- and 3,000-Step examples below exclude Supplies.
 
 ### Low-activity session: 1,000 Steps
 
@@ -165,6 +188,14 @@ The current model gives Hard a 20% efficiency advantage over Easy. Test whether
 that is a compelling optional reward for saving Energy or an excessive pressure
 to avoid Easy.
 
+### Moderate session with Supplies
+
+Starting with at least 30 Gold, 3,000 newly rewardable Steps fund one Hard run
+with Supplies: 135 EXP, 54 gross Gold, and 30 Gold spent. Claiming all three
+Quests adds 45 EXP and 25 Gold, for 180 EXP and a net +49 Gold. Starting from
+Level 1 with zero EXP, this ends at Level 2 with 80 EXP. Without Supplies the
+same scenario gives 135 EXP and +61 Gold. Compare both in playtests.
+
 ## What is balanced together
 
 Do not tune any one of these values in isolation:
@@ -175,13 +206,15 @@ Steps per Energy
 + Adventure EXP and Gold
 + Quest targets and rewards
 + Level curve
++ Trail Supplies price and multiplier
 + future Gold sink prices
 ```
 
 For example, reducing Steps per Energy makes every Adventure and Gold source
 more frequent. Increasing Quest rewards changes both level pacing and the
-future Gold economy. A Gold price cannot be chosen before knowing typical Gold
-earned per active day.
+future Gold economy. Validate an initial Gold price against observed Gold earned
+per active day and player goals before treating it as a lasting balance value.
+The implemented 30-Gold Trail Supplies price is a starting point for that review.
 
 ## Invariants
 
@@ -261,7 +294,9 @@ data than the product actually needs.
 - Number of level-ups per active day.
 - Gold earned per active day and current Gold balance distribution.
 - Share of daily EXP/Gold from Quests versus Adventures.
-- Future: Gold spent, purchase selection, and purchase failure rate.
+- Gold spent on Trail Supplies, selection by difficulty, and insufficient-Gold
+  rejection rate. Separate gross rewards from net Gold after the 30-Gold cost.
+- Future: other purchase categories, if implemented.
 
 ### Player feedback
 
@@ -271,7 +306,7 @@ Ask simple qualitative questions:
 - Did you feel encouraged or pressured by today’s Quests?
 - Did Easy, Normal, and Hard all look worthwhile?
 - Did your level change at a satisfying pace?
-- What would you want Gold to do first?
+- Did Trail Supplies feel worthwhile, and was their upfront price clear?
 
 ## Measurement windows
 
@@ -311,7 +346,7 @@ Prefer small, reversible changes. Examples:
 | Hard is never chosen    | Adjust its reward relationship modestly             | Make Easy objectively bad    |
 | Quest feels mandatory   | Lower target or reduce emphasis                     | Add harsh expiry penalties   |
 | Leveling feels too fast | Tune one reward source after measurement            | Flatten all rewards blindly  |
-| Gold has no meaning     | Design one optional sink first                      | Add many shops/items at once |
+| Supplies feel unappealing | Review observed use, price, and reward trade-off   | Add many shops/items at once |
 
 ## Balance levers
 
@@ -331,7 +366,8 @@ This document does not define:
 
 - A final level cap or long-term endgame curve.
 - Combat stats, enemy difficulty, damage, health, or failure chance.
-- Items, loot rarity, equipment, crafting, shops, or Gold sink prices.
+- Items, loot rarity, equipment, crafting, shops, or prices for additional Gold
+  sinks beyond the implemented Trail Supplies baseline.
 - Premium currency, real-money purchases, ads-for-rewards, trading, or
   marketplace behavior.
 - Energy caps, passive regeneration, expiration, or paid recovery.
@@ -342,17 +378,24 @@ This document does not define:
 
 ### Phase 6 — Supabase integration
 
-Cloud synchronization should preserve the correctness of balances and rewards.
-Before a cloud balance is treated as authoritative, define conflict handling,
-transaction identity, offline replay behavior, and recovery from duplicated or
-missing outcomes. Balancing values should not be changed merely to compensate
-for an unresolved synchronization problem.
+Phase 6 implements optional authentication and a complete gameplay snapshot.
+The same linked account backs up local progress; a missing or different link
+with an existing remote save requires explicit Restore/Replace. Restore replaces
+local Player, Health checkpoints, and Quest state. Cloud is a backup, with no
+cross-device merge or server-authoritative reward ledger. Balancing values must
+not compensate for unresolved synchronization problems.
+
+Phase 6.1 metrics are local-only and excluded from that snapshot. Losing metrics
+on uninstall or clear-data is accepted; restore cannot recover missing events.
+Use a new observation window after restore/account changes. See the Phase 6.1
+plan's coverage table for historical events, current-state queries, and deferred
+measurements; event gaps alone do not establish inactivity.
 
 ### Economy
 
-Gold sinks must be priced from observed Gold income and player goals. The first
-sink should be optional and understandable; it must not replace Energy as the
-core activity-to-gameplay bridge.
+Trail Supplies are the implemented optional Gold sink. Validate their existing
+30-Gold price and ×1.5 multiplier against observed income and player goals before
+tuning them. They must not replace Energy as the activity-to-gameplay bridge.
 
 ### Adventure and content expansion
 
@@ -382,6 +425,7 @@ Balancing is ready for its first live iteration when:
 | Version | Date       | Change                        | Reason                                                   |
 | ------- | ---------- | ----------------------------- | -------------------------------------------------------- |
 | 0.1     | 2026-09-10 | Initial pre-playtest baseline | Phase 5 complete; values recorded before balance changes |
+| 0.2     | 2026-09-10 | Align baseline with Phase 5.1/6 | Document implemented Supplies and cloud restore; clarify local metrics limits without changing game values |
 
 ## Design summary
 

@@ -1,38 +1,23 @@
 # Everstride — Progress Tracker
 
-อ้างอิงแผนงานที่ `everstride-docs/plan/EVERSTRIDE_PLAN.md`
+อ้างอิงแผนงานที่ [EVERSTRIDE_PLAN.md](EVERSTRIDE_PLAN.md)
 
-## สถานะปัจจุบัน (2026-09-07, อัปเดตล่าสุด)
+## สถานะปัจจุบัน (2026-09-10, อัปเดตล่าสุด)
 
-ตรวจสอบ repo จริง (`everstride-mobile/`) แล้วพบว่า:
+Phase 0–6 เสร็จแล้ว: Health Connect sync, Player progression, Greenwood Trail,
+Daily Quests, Trail Supplies, และ Supabase Auth/Cloud Backup ทำงานแล้ว
 
-- **Flutter project สร้างแล้ว** — มี `pubspec.yaml`, `lib/main.dart`
-- `flutter analyze` ผ่าน ไม่มี issue
-- **Android emulator** — **ยืนยันแล้ว** ว่า build ขึ้นจริงบน `Pixel_10_Pro` emulator, เปิดแอปได้สำเร็จ (ปิด emulator แล้วหลังเช็ค)
-- **Riverpod** — wire แล้ว — `main.dart` ห่อ `MyApp` ด้วย `ProviderScope`
-- **GoRouter** — wire แล้ว — `lib/app/router.dart` มี route `/`, `MaterialApp.router` ใช้งานจริง, `MyHomePage` ย้ายไป `lib/app/home_page.dart`
-- **minSdk** — bump เป็น `26` ใน `android/app/build.gradle.kts` แล้ว (Health Connect ต้องการ API 26 ขึ้นไป)
-- **อุปกรณ์ Android จริง** — **ยืนยันแล้ว** รันบนมือถือจริงได้ (ไม่ใช่แค่ emulator), อ่านค่าก้าวเดินถูกต้อง
+สิ่งที่ต้องระวัง: Cloud Backup ยังปลอดภัยสำหรับการเล่นหลักเครื่องเดียวเท่านั้น
+สองเครื่องที่ผูกบัญชีเดียวกันสามารถเขียน snapshot ทับกันได้ จึงต้องทำ
+Multi-device Save Safety ก่อนเปิดให้เล่นสลับเครื่องอย่างเป็นทางการ
 
-**Phase 0 เสร็จครบทุกข้อแล้ว** — พร้อมเริ่ม Phase 1
+## เป้าหมายถัดไป
 
-## ต้องทำก่อน (ถัดไป — Phase 1: Health Connect Prototype)
+1. ออกแบบ Multi-device Save Safety และทดสอบ conflict/offline restore
+2. ทำ Phase 6.1 Balancing Metrics Instrumentation และเก็บ baseline การเล่น
+3. ทำ Phase 7 Full UI & UX Polish
 
-1. Detect Health Connect availability
-2. Request required permissions
-3. Handle permission denied state
-4. Read today's steps
-5. Display current step count
-
-ทำ `HealthRepository` (`lib/features/health/domain/repositories/health_repository.dart`) ที่มี interface เตรียมไว้แล้วให้เป็นจริง (data source + implementation), ตามลำดับใน plan section 15
-
-## เป้าหมายที่ plan ระบุไว้ (Current Priority ใน plan)
-
-> อ่านจำนวนก้าวเดินวันนี้จาก Health Connect ได้จริง และแสดงผลใน Flutter อย่างเสถียร บนอุปกรณ์ Android จริง
-
-นี่คือ Phase 1 — ทุกอย่างอื่นต้องรอจน milestone นี้เสถียรก่อน (ห้ามข้ามไปทำ RPG mechanics ก่อน)
-
-## Checklist ตามลำดับ (Phase 0 → Phase 1)
+## Checklist implementation history
 
 ### Phase 0 — Project Foundation
 
@@ -186,10 +171,35 @@
 - [x] Connect real Supabase project and smoke-test auth (สร้าง confirmed test user และ Sign In จากแอปได้; `flutter analyze` ผ่าน)
 - [x] Re-run full manual cloud recheck after account-link safety fix (fresh install → sign in → Restore, explicit Replace, account switching, offline retry, และ RLS isolation ตาม `development/testing.md`)
 
+### Phase 6.1 — Balancing Metrics Instrumentation
+
+อ้างอิง [implementation plan](plans/2026-09-10-phase6.1-balancing-metrics.md)
+และ [balancing.md](game-design/balancing.md) — phase นี้เก็บ observation
+เท่านั้น ไม่มีการเปลี่ยน balance values และข้อมูล metrics เป็น local-only;
+uninstall/clear-data/restore cloud ไม่กู้คืน event history
+
+- [x] Add append-only Drift `MetricEvents` storage (schema 7 → 8) และ safe `MetricsRecorder` ที่ไม่ทำให้ gameplay failure กลายเป็น error ของผู้เล่น
+- [x] Instrument health sync, positive Energy credit, Adventure attempts/rejections, Quest rollover, และ persisted Quest claims
+- [x] Add focused storage/recorder, Adventure, และ Quest rollover coverage; `flutter analyze` ผ่าน
+- [ ] Run the Phase 6.1 manual database checks in `development/testing.md` on a debuggable device build
+- [ ] Collect a clearly labelled one-to-two-week baseline before changing balance values
+
 ## Phase ถัดไป
 
-- [ ] Phase 6.1 Balancing
 - [ ] Phase 7 — Full UI & UX Polish
+- [ ] Phase 7.1 — Multi-device Save Safety — ออกแบบและวางแผนรองรับบัญชีเดียวบนหลายเครื่องก่อน implement
+
+**ข้อจำกัดปัจจุบัน:** Login บัญชีเดียวกันได้หลายเครื่อง แต่หลังผูกบัญชีแล้วแต่ละเครื่องยัง upsert snapshot ของตัวเองทับ cloud ได้ ไม่มีการตรวจ revision ข้ามเครื่องหรือ merge ความคืบหน้า ข้อมูลเก่าจึงอาจทับข้อมูลใหม่ได้ การ serialize upload ใน Phase 6 ป้องกันลำดับ request ภายในเครื่องเดียวเท่านั้น ระหว่างนี้ควรเล่นหลักเครื่องเดียว
+
+**ลำดับงานที่แนะนำ:**
+
+1. ออกแบบ Multi-device Save Safety ก่อนเปิดให้เล่นสลับเครื่อง: กำหนดพฤติกรรมเมื่อ local/cloud ต่างกันและเมื่อกลับจาก offline โดยเริ่มจากตรวจ revision และปฏิเสธการเขียนข้อมูลเก่าที่ฝั่ง server แบบ atomic พร้อมเก็บ local progress ไว้ให้ผู้ใช้ตัดสินใจ การ fetch ก่อน push อย่างเดียวไม่ป้องกันสองเครื่องเขียนพร้อมกัน
+2. กำหนดวิธีย้ายเครื่อง/แก้ conflict ที่ผู้ใช้เข้าใจได้ รวมถึงการเล่น offline พร้อมกัน และกติกา Steps/Quest ข้ามเครื่องเพื่อไม่ให้รับรางวัลซ้ำ ห้ามบวก Energy/Gold ของสอง snapshot เข้าด้วยกันโดยตรง; เลือกนโยบายใน spec ก่อน implement
+3. ยืนยันด้วยสองเครื่องจริงหรือ integration tests: A อัปเดต cloud แล้ว B ส่ง save เก่า, เขียนพร้อมกัน, offline แล้ว reconnect, retry หลัง request ขาดการตอบกลับ และ restore ตามด้วย Health sync ต้องไม่ทับความคืบหน้าเงียบ ๆ หรือให้รางวัลซ้ำ
+4. ทำ Phase 6.1 แล้วเก็บ baseline 1–2 สัปดาห์ก่อนปรับ balance ครั้งใหญ่ ระหว่างที่ multi-device ยังไม่พร้อมสามารถเก็บข้อมูลด้วยเครื่องหลักเครื่องเดียวได้ โดยแยก session ที่ใช้ debug Steps ออกจากการเล่นจริง
+5. ทำ Phase 7 โดยเน้นสถานะ backup/conflict, ความชัดเจนของค่าใช้จ่ายและรางวัล, และ feedback หลัง sync/Adventure/Quest จากนั้นค่อยเลือกปรับ balance ตามข้อมูลและความคิดเห็นผู้เล่น
+
+รายการ Multi-device ข้างต้นเป็นข้อเสนอสำหรับ spec/plan ถัดไป ยังไม่ใช่ความสามารถที่ implement แล้ว และยังไม่รับรองการ merge การเล่นพร้อมกันหลายเครื่อง
 
 ## กฎที่ต้องยึดระหว่างทำงาน (จาก plan section 14)
 

@@ -12,7 +12,7 @@ Everstride is an Android-first, health-powered RPG where real-world walking beco
 | Primary platform   | Android                                         |
 | Mobile stack       | Flutter, Riverpod, GoRouter                     |
 | Health integration | Android Health Connect                          |
-| Current milestone  | Reliably read today's steps from Health Connect |
+| Current milestone  | Safe cloud backup, balancing instrumentation, and multi-device save planning |
 
 ## Documentation map
 
@@ -27,13 +27,17 @@ Everstride is an Android-first, health-powered RPG where real-world walking beco
 | [Core game loop](game-design/core-loop.md)          | Player-facing flow from real-world activity to RPG progression       |
 | [Energy system](game-design/energy-system.md)       | Rules for earning, storing, and spending Energy                      |
 | [Player progression](game-design/progression.md)    | MVP rules for EXP, gold, levels, and character advancement           |
+| [Adventure system](game-design/adventure-system.md) | Difficulty-aware Greenwood Trail rules and rewards                    |
+| [Daily Quests](game-design/quests.md)               | Optional daily goals, rewards, and rollover rules                     |
+| [Economy](game-design/economy.md)                   | Gold principles and implemented Trail Supplies                        |
+| [Balancing](game-design/balancing.md)               | Current values, measurement questions, and tuning policy              |
 | [Mobile app README](../everstride-mobile/README.md) | Local setup and day-to-day development for the Flutter application   |
 
 ## Where to start
 
 Choose the path that fits what you need:
 
-- **New to Everstride?** Read [Project context](CONTEXT.md), then [Development plan](plan/EVERSTRIDE_PLAN.md).
+- **New to Everstride?** Read [Project context](CONTEXT.md), then [Development plan](EVERSTRIDE_PLAN.md).
 - **Ready to contribute?** Follow the [mobile app setup guide](../everstride-mobile/README.md), then read the [working agreement](AGENTS.md).
 - **Picking up implementation work?** Start with the [progress tracker](PROGRESS.md); it identifies the current priority and next concrete tasks.
 - **Questioning an architectural choice?** Check [Architecture decisions](DECISIONS.md) before proposing a change.
@@ -41,10 +45,10 @@ Choose the path that fits what you need:
 ## Product loop
 
 ```text
-Real-world steps → Energy → Adventures and quests → EXP, gold, and items → Character progression
+Real-world steps → Energy → Adventures and Quests → EXP and Gold → Character progression
 ```
 
-The MVP begins with a deliberately narrow foundation: read today's steps from Health Connect safely and reliably. RPG systems, sync, and cloud features follow only after that milestone is stable.
+The current MVP includes Health Connect sync, Energy, Greenwood Trail, Daily Quests, Trail Supplies, and optional Supabase backup. Multi-device conflict handling and balancing instrumentation are next; consult [PROGRESS.md](PROGRESS.md) for the current scope and limitations.
 
 ## Contribution principles
 
