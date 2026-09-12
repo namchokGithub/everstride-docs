@@ -184,9 +184,21 @@ uninstall/clear-data/restore cloud ไม่กู้คืน event history
 - [ ] Run the Phase 6.1 manual database checks in `development/testing.md` on a debuggable device build
 - [ ] Collect a clearly labelled one-to-two-week baseline before changing balance values
 
+### Phase 7 — Full UI & UX Polish
+
+ไม่มี game-design document เฉพาะ phase นี้; ขอบเขตมาจาก handoff เรื่อง
+Phase 7 / Full UI and UX polish ใน `game-design/adventure-system.md`,
+`economy.md`, `quests.md`, และ `balancing.md` ร่วมกับ art direction ที่ได้รับ
+โดยตรง Mascot artwork placement ใหม่ถูก defer ไว้ชัดเจน ไม่ได้ถูกลืม
+
+- [x] Replace theme tokens with jade/mint/deep-navy/warm-cream/amber/berry และกำหนด light/dark scaffold, app bar, primary-button contrast
+- [x] Add one reduced-motion-aware Level Up reveal on Adventure result และ Quest claim success feedback
+- [x] Restyle insufficient Energy/Gold dialogs, clarify Energy recovery copy, และแสดง Quest status แบบ plain language พร้อม mint claimable label
+- [x] Add Home calendar/sync tooltips and focused widget coverage for reveal, Quest feedback/status, and icon labels; `flutter analyze` ผ่าน
+- [ ] Run the Phase 7 visual, screen-reader, reduced-motion, and light/dark manual checks in `development/testing.md`
+
 ## Phase ถัดไป
 
-- [ ] Phase 7 — Full UI & UX Polish
 - [ ] Phase 7.1 — Multi-device Save Safety — ออกแบบและวางแผนรองรับบัญชีเดียวบนหลายเครื่องก่อน implement
 
 **ข้อจำกัดปัจจุบัน:** Login บัญชีเดียวกันได้หลายเครื่อง แต่หลังผูกบัญชีแล้วแต่ละเครื่องยัง upsert snapshot ของตัวเองทับ cloud ได้ ไม่มีการตรวจ revision ข้ามเครื่องหรือ merge ความคืบหน้า ข้อมูลเก่าจึงอาจทับข้อมูลใหม่ได้ การ serialize upload ใน Phase 6 ป้องกันลำดับ request ภายในเครื่องเดียวเท่านั้น ระหว่างนี้ควรเล่นหลักเครื่องเดียว

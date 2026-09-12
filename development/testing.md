@@ -193,3 +193,24 @@ storage.
 7. Confirm sync, Adventure, and Quest feedback remain responsive. Label
    debug-seeded sessions and note account/restore window boundaries manually;
    uninstall loss is accepted and cloud restore does not recover metrics.
+
+## Phase 7 — Full UI & UX Polish
+
+1. Open the app → background reads as warm cream, primary buttons are deep
+   navy, and interactive accents read as jade. Compare the color family with
+   `lib/assets/branding/logo-mark.png`.
+2. Complete an Adventure that crosses a level boundary → the `Level Up!` line
+   visibly scales into place only when `leveledUp` is true. Enable the OS
+   reduce-motion setting and repeat → the text appears immediately.
+3. Claim a Daily Quest → a `Claimed! +N EXP, +M Gold` confirmation appears.
+   Make a claim fail → its existing failure message still appears.
+4. Attempt an Adventure with insufficient Energy, then insufficient Gold with
+   Trail Supplies selected → both dialogs use the warm berry icon/title and
+   explain the cost, current balance, and next action.
+5. Open Journal → statuses use `In Progress`, `Ready to claim`, `Claimed`, or
+   `Expired` rather than raw enum values. `Ready to claim` is a mint pill with
+   deep-navy text; the other statuses use muted grey-navy text.
+6. Long-press Home's calendar and sync icons → `Pick a date` and `Sync now`
+   tooltips appear. With a screen reader on, both controls are announced.
+7. Switch between light and dark modes → scaffold, app bar, and primary-button
+   contrast remain deliberate and readable in both modes.
